@@ -28,6 +28,7 @@
 
 /vendor/bundle
 .DS_Store
+.idea
 
 public/tmp/*
 /public/uploads
