@@ -11,6 +11,8 @@
 
 class Question < ApplicationRecord
   has_many :answers
+  has_many :user_questions
+  has_many :users, through: :user_questions
 
   validates :content, presence: true
   validates :answer_number, presence: true

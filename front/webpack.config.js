@@ -3,7 +3,8 @@ const path = require('path');
 module.exports = [
     {
         entry:  {
-            'index': './src/index.js'
+            'index': './src/entries/index.js',
+            'admin/questions/index': './src/entries/admin/questions/index.js'
         },
         output: {
             path: path.resolve(__dirname, '../app/assets/javascripts/webpack'),

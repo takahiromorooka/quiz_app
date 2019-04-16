@@ -1,29 +1,29 @@
-import React,{Component} from 'react'
+import React, {Component} from 'react'
 import socketio from 'socket.io-client'
-import Form from './Form'
+
 import QuestionApi from "../api/question";
 
 const socket = socketio.connect('http://localhost:3005')
 
-class App  extends Component {
-    constructor(props){
+class App extends Component {
+    constructor(props) {
         super(props)
         this.state = {
-            question: '',
-            answers: [],
+            question: {question: ''},
             questionNumber: 1,
-            answerNumber: ''
+            answerNumber: '',
+            isQuestion: true,
+            isAnswer: false
         }
         //このcomponentで扱う配列logsの初期値を設定する
     }
 
     fetchQuestion(questionId) {
         QuestionApi.fetchQuestion(questionId)
-            .then((data) =>{
+            .then((data) => {
                 console.log(data)
                 this.setState({
-                    question: data,
-                    answers: data['answers']
+                    question: {question: data}
                 })
             })
             .catch((error) => {
@@ -33,36 +33,23 @@ class App  extends Component {
     }
 
     handleAnswerNumber(number) {
+        console.log(number)
         this.setState({
             answerNumber: number
         })
     }
 
-    sendAnwerNumber () {
-
-    }
-
-    componentDidMount(){
+    componentDidMount() {
         this.fetchQuestion(this.state.questionNumber)
 
-        socket.on('testFunction', (obj) => {
-            const commentLogs = this.state.commentLogs
-            obj.key = 'key_' + (this.state.commentLogs.length + 1)
-            commentLogs.unshift(obj)
-            console.log(obj)
-            console.log('testFunction')
-            this.setState({
-                comment: commentLogs
-            })
-        })
-
-        //このコンポーネントがDOMによって読み込まれた後の処理を設定する
-        socket.on('chatMessage',(obj) => {
+        socket.on('nextQuestion', (obj) => {
             //WebSocketサーバーからchatMessageを受け取った際の処理
-            const logs2 = this.state.logs
-            obj.key = 'key_' + (this.state.logs.length + 1)
-            logs2.unshift(obj)
-            this.setState({logs: logs2})
+            console.log(obj)
+            this.setState({
+                question: obj,
+                isQuestion: true,
+                isAnswer: false,
+            })
         })
 
     }
@@ -73,38 +60,35 @@ class App  extends Component {
         for (let [index, answer] of answers.entries()) {
             answersComponents.push(
                 <li key={answer.id} onClick={() => this.handleAnswerNumber(index + 1)}>{answer.content}</li>
-                )
+            )
         }
         return answersComponents
     }
 
     answerQuestion() {
-
+        this.setState({
+            isAnswer: true,
+            isQuestion: false
+        })
     }
 
-    render(){
-    //     const messages = this.state.logs.map(e => (
-    //         <div key={e.key}>
-    // <span>{e.name}</span>
-    //     <span>: {e.message}</span>
-    //     <p />
-    //     </div>
-    // ))
-    //     const comment = this.state.commentLogs.map(e => (
-    //         <div key={e.key}>
-    // <span>{e.comment}</span>
-    //     <p />
-    //     </div>
-    // ))
+    render() {
 
-        //ログの設定。今までのname、messageをkeyごとに表示する
-        return(
+        return (
             <div>
-            <h1 id='title'>問題</h1>
-            <p>{this.state.question.content}</p>
-                <ol>
-                    {this.showAnswers(this.state.answers)}
-                </ol>
+                <h1>問題</h1>
+                    <div>
+                        {this.state.isQuestion &&
+                            <div>
+                                <p>{this.state.question.question.content}</p>
+                                <ol>
+                                    {this.state.question.question ? this.showAnswers(this.state.question.question.answers) : ''}
+                                </ol>
+                                <div className='btn btn-primary' onClick={() => this.answerQuestion()}>回答する</div>
+                            </div>
+                        }
+                        {this.state.isAnswer && <div>次の質問まで少々お待ちください</div>}
+                    </div>
             </div>
         )
     }
