@@ -33,7 +33,7 @@ class App  extends Component {
         //ログの設定。今までのname、messageをkeyごとに表示する
         return(
             <div>
-                <h1 id='title'>問題</h1>
+                <h1 id='title'>MILLIONAIRE</h1>
                 {this.state.questions}
                 {/*<Form />*/}
                 {/*<div id='log'>{messages}</div>*/}

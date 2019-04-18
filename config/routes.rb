@@ -11,9 +11,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-
       resources :questions, only: [:show]
-
+      put 'questions/:question_id/:answer', to: 'questions#answer', as: :question_answer
     end
   end
 end
