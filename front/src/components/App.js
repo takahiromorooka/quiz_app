@@ -1,21 +1,57 @@
 import React, {Component} from 'react'
 import socketio from 'socket.io-client'
-
+import Question from './Question'
 import QuestionApi from "../api/question";
 
 const socket = socketio.connect('http://localhost:3005')
+const users = JSON.parse(document.getElementById('users').value)
+const userOptions = users.map((n) => (
+        <option key={n.id} value={n.name}>
+            {n.name}
+        </option>
+    )
+  );
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-        question: {question: ''},
-        questionNumber: 1,
-        answerNumber: '',
-        isQuestion: true,
-        isAnswer: false
+      userName: 'guest',
+      question: {question: ''},
+      questionNumber: 1,
+      answerNumber: 0,
+      isQuestion: true,
+      isAnswer: false
     }
-    //このcomponentで扱う配列logsの初期値を設定する
+  }
+
+  componentDidMount() {
+    console.log('question_id=' + this.state.questionNumber)
+    this.fetchQuestion(this.state.questionNumber)
+
+    socket.on('nextQuestion', (obj) => {
+      //WebSocketサーバーからchatMessageを受け取った際の処理
+      console.log('obj=' + JSON.stringify(obj));
+      this.setState({
+          userName: this.state.userName,
+          question: obj,
+          questionNumber: obj.question.id,
+          answerNumber: 0,
+          isQuestion: true,
+          isAnswer: false,
+      })
+    })
+  }
+
+  startQuestion(name) {
+    let baseUrl = this.defaultBaseUrl();
+    axios.get(baseUrl + '/questions/1',)
+  }
+
+  setStateUser(name) {
+    this.setState({
+      userName: name
+    })
   }
 
   fetchQuestion(questionId) {
@@ -31,7 +67,18 @@ class App extends Component {
         console.log(error)
     })
   }
-   //clickした瞬間に、stateに回答番号をセット
+
+  showAnswers(answers) {
+    let answersComponents = []
+
+    for (let [index, answer] of answers.entries()) {
+      answersComponents.push(
+        <li key={answer.id} onClick={() => this.handleAnswerNumber(index + 1)} className='answer-list'>{answer.content}</li>
+      )
+    }
+    return answersComponents
+  }
+
   handleAnswerNumber(number) {
     console.log(number)
     this.setState({
@@ -39,61 +86,57 @@ class App extends Component {
     })
   }
 
-  componentDidMount() {
-    this.fetchQuestion(this.state.questionNumber)
-
-    socket.on('nextQuestion', (obj) => {
-      //WebSocketサーバーからchatMessageを受け取った際の処理
-      console.log(obj)
-      this.setState({
-          question: obj,
-          isQuestion: true,
-          isAnswer: false,
+  answerQuestion(answerNumber) {
+    QuestionApi.fetchAnswer(this.state.questionNumber, answerNumber, this.state.userName)
+      .then((data) => {
+        this.setState({
+          isAnswer: true,
+          isQuestion: false
+        })
       })
-    })
-
-  }
-
-  showAnswers(answers) {
-    let answersComponents = []
-
-    for (let [index, answer] of answers.entries()) {
-      answersComponents.push(
-          <li key={answer.id} onClick={() => this.handleAnswerNumber(index + 1)}>{answer.content}</li>
-      )
-    }
-    return answersComponents
-  }
-
-  answerQuestion() {
-    QuestionApi.fetchAnswer(this.state.questionNumber, this.state.answerNumber)
       .catch((error) => {
-        alert('エラーが発生しました。')
+        alert('エラーが発生しました 。')
         console.log(error)
     })
 
-    this.setState({
-        isAnswer: true,
-        isQuestion: false
-    })
+
   }
 
-  render() {
 
+  render() {
     return (
       <div>
         <h1>MILLIONAIRE</h1>
           <div>
-            {this.state.isQuestion &&
               <div>
-                <p>{this.state.question.question.content}</p>
-                <ol>
-                    {this.state.question.question ? this.showAnswers(this.state.question.question.answers) : ''}
-                </ol>
-                <div className='btn btn-primary' onClick={() => this.answerQuestion()}>final answer!</div>
+                {this.state.userName != 'guest' &&
+                  <div>
+                    <p id='userName'>{this.state.userName}</p>
+                    {this.state.isQuestion &&
+                      <Question
+                        question={this.state.question}
+                        questionNumber={this.state.questionNumber}
+                        answerNumber={this.state.answerNumber}
+                        showAnswers={(value) => this.showAnswers(value)}
+                        answerQuestion={(value) => this.answerQuestion(value)}
+                      />
+                  }
+                  {this.state.isAnswer && <div>次の質問まで少々お待ちください</div>}
+                  </div>
+                }
+                {this.state.userName == 'guest' &&
+                <div>
+                  <p>ようこそ{this.state.userName}様、下の選択肢から自分の名前を選んでください。</p>
+                  <div>
+                    <select className='btn btn-primary'
+                            onChange={(e) => this.setStateUser(e.target.value)}>
+                            <option/>
+                            {userOptions}
+                    </select>
+                  </div>
+                </div>
+                }
               </div>
-            }
-            {this.state.isAnswer && <div>次の質問まで少々お待ちください</div>}
           </div>
       </div>
     )

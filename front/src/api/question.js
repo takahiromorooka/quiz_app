@@ -13,13 +13,20 @@ class QuestionApi extends ApiBase {
     })
   }
 
-  static fetchAnswer(questionId, answerId) {
+  static fetchAnswer(questionId, answerId, userName) {
     let baseUrl = this.defaultBaseUrl();
 
-    return new Promise(function (resolve, redect) {
+    return new Promise(function (resolve, reject) {
       const token = document.getElementsByName("csrf-token")[0].getAttribute("content");
       axios.defaults.headers.common["X-CSRF-Token"] = token;
-      axios.put(baseUrl + `/questions` + `/${questionId}` + `/${answerId}`, )
+      axios.put(baseUrl + `/questions` + `/${questionId}`,
+          {
+            question: {
+              userName: `${userName}`,
+              question_id: `${questionId}`,
+              answer: `${answerId}`
+            }
+        })
         .then(response => resolve(response.data))
         .catch(error => reject(error.response.data))
     })

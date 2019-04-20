@@ -1,0 +1,5 @@
+h2 集計画面
+
+ul
+  - @result.each_with_index do |result, i|
+    li "#{i}. #{result.name} scoreは#{result.score}" 

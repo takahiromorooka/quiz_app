@@ -1,46 +1,22 @@
-import React,{Component} from 'react'
+import React, {Component} from 'react'
 import socketio from 'socket.io-client'
-import Form from './Form'
 
 const socket = socketio.connect('http://localhost:3005')
 
-class App  extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            questions: [],
-            answers: []
-        }
-        //このcomponentで扱う配列logsの初期値を設定する
-    }
-    componentDidMount(){
-    }
-
-    render(){
-        const messages = this.state.logs.map(e => (
-            <div key={e.key}>
-                <span>{e.name}</span>
-                <span>: {e.message}</span>
-                <p />
-            </div>
-        ))
-        const comment = this.state.commentLogs.map(e => (
-            <div key={e.key}>
-                <span>{e.comment}</span>
-                <p />
-            </div>
-        ))
-        //ログの設定。今までのname、messageをkeyごとに表示する
-        return(
-            <div>
-                <h1 id='title'>MILLIONAIRE</h1>
-                {this.state.questions}
-                {/*<Form />*/}
-                {/*<div id='log'>{messages}</div>*/}
-                {/*<div>{comment}</div>*/}
-            </div>
-        )
-    }
-}
-
-export default App
+function Question ({question, questionNumber, answerNumber, showAnswers, answerQuestion}) {
+  return (
+      <div>
+        <div>
+          <div>
+            <p>{question.question.content}</p>
+            <ol>
+                {question.question ? showAnswers(question.question.answers) : ''}
+            </ol>
+            <div>{answerNumber == 0 ? '' : 'あなたの回答は' + answerNumber + 'でよろしいでしょうか？'}</div>
+            <div className='btn btn-primary' onClick={() => answerQuestion(answerNumber)}>final answer!</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+export default Question

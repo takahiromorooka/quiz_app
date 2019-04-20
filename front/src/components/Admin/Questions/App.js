@@ -20,8 +20,9 @@ class App extends Component {
   fetchQuestion(questionId) {
     QuestionApi.fetchQuestion(questionId)
       .then((data) =>{
+        console.log(data.id)
           this.setState({
-              question: data,
+              question: data
           })
       })
       .catch((error) => {
@@ -56,12 +57,12 @@ class App extends Component {
 
 
 
-
   render(){
     return(
         <div>
             <h1>Admin画面</h1>
             {this.setQuestionButton()}
+            <a href="http://localhost:3000/admin/questions/aggregate" className='btn btn-primary' >集計</a>
         </div>
     )
   }
