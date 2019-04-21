@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import socketio from 'socket.io-client'
 import Question from './Question'
 import QuestionApi from "../api/question";
+import Cookies from 'js-cookie';
 
 const socket = socketio.connect('http://localhost:3005')
 const users = JSON.parse(document.getElementById('users').value)
@@ -11,12 +12,17 @@ const userOptions = users.map((n) => (
         </option>
     )
   );
+// Cookies.remove('user_name');
+// Cookies.remove('question_number');
+const user_name = Cookies.get('user_name') ? Cookies.get('user_name') : 'guest';
+const question_number = Cookies.get('question_number') ? Cookies.get('question_number') : 1;
 
 class App extends Component {
   constructor(props) {
     super(props)
+    console.log(user_name)
     this.state = {
-      userName: 'guest',
+      userName: user_name,
       question: {question: ''},
       questionNumber: 1,
       answerNumber: 0,
@@ -26,16 +32,17 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log('question_id=' + this.state.questionNumber)
-    this.fetchQuestion(this.state.questionNumber)
+    this.fetchQuestion(question_number)
 
     socket.on('nextQuestion', (obj) => {
-      //WebSocketサーバーからchatMessageを受け取った際の処理
+      //WebSocketサーバーからnextQuestionを受け取った際の処理
       console.log('obj=' + JSON.stringify(obj));
+      Cookies.set('question_number', obj.question.id);
+      const question_number = Cookies.get('question_number');
       this.setState({
           userName: this.state.userName,
           question: obj,
-          questionNumber: obj.question.id,
+          questionNumber: question_number,
           answerNumber: 0,
           isQuestion: true,
           isAnswer: false,
@@ -49,8 +56,10 @@ class App extends Component {
   }
 
   setStateUser(name) {
+    Cookies.set('user_name', name);
+    const user_name = Cookies.get('user_name');
     this.setState({
-      userName: name
+      userName: user_name
     })
   }
 
@@ -106,38 +115,36 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1>MILLIONAIRE</h1>
-          <div>
-              <div>
-                {this.state.userName != 'guest' &&
-                  <div>
-                    <p id='userName'>{this.state.userName}</p>
-                    {this.state.isQuestion &&
-                      <Question
-                        question={this.state.question}
-                        questionNumber={this.state.questionNumber}
-                        answerNumber={this.state.answerNumber}
-                        showAnswers={(value) => this.showAnswers(value)}
-                        answerQuestion={(value) => this.answerQuestion(value)}
-                      />
-                  }
-                  {this.state.isAnswer && <div>次の質問まで少々お待ちください</div>}
-                  </div>
-                }
-                {this.state.userName == 'guest' &&
+        <div>
+            <div>
+              {this.state.userName != 'guest' &&
                 <div>
-                  <p>ようこそ{this.state.userName}様、下の選択肢から自分の名前を選んでください。</p>
-                  <div>
-                    <select className='btn btn-primary'
-                            onChange={(e) => this.setStateUser(e.target.value)}>
-                            <option/>
-                            {userOptions}
-                    </select>
-                  </div>
-                </div>
+                  <p id='userName'>{this.state.userName}</p>
+                  {this.state.isQuestion &&
+                    <Question
+                      question={this.state.question}
+                      answerNumber={this.state.answerNumber}
+                      showAnswers={(value) => this.showAnswers(value)}
+                      answerQuestion={(value) => this.answerQuestion(value)}
+                    />
                 }
+                {this.state.isAnswer && <div>次の質問まで少々お待ちください</div>}
+                </div>
+              }
+              {this.state.userName == 'guest' &&
+              <div>
+                <p>ようこそ{this.state.userName}様、下の選択肢から自分の名前を選んでください。</p>
+                <div>
+                  <select className='btn btn-primary'
+                          onChange={(e) => this.setStateUser(e.target.value)}>
+                          <option/>
+                          {userOptions}
+                  </select>
+                </div>
               </div>
-          </div>
+              }
+            </div>
+        </div>
       </div>
     )
   }

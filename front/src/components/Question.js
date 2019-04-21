@@ -3,7 +3,7 @@ import socketio from 'socket.io-client'
 
 const socket = socketio.connect('http://localhost:3005')
 
-function Question ({question, questionNumber, answerNumber, showAnswers, answerQuestion}) {
+function Question ({question, answerNumber, showAnswers, answerQuestion}) {
   return (
       <div>
         <div>
