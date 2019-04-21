@@ -12,8 +12,8 @@ const userOptions = users.map((n) => (
         </option>
     )
   );
-// Cookies.remove('user_name');
-// Cookies.remove('question_number');
+Cookies.remove('user_name');
+Cookies.remove('question_number');
 const user_name = Cookies.get('user_name') ? Cookies.get('user_name') : 'guest';
 const question_number = Cookies.get('question_number') ? Cookies.get('question_number') : 1;
 
@@ -79,10 +79,11 @@ class App extends Component {
 
   showAnswers(answers) {
     let answersComponents = []
+    let alphabet = ['A', 'B', 'C', 'D']
 
     for (let [index, answer] of answers.entries()) {
       answersComponents.push(
-        <li key={answer.id} onClick={() => this.handleAnswerNumber(index + 1)} className='answer-list'>{answer.content}</li>
+        <li key={answer.id} onClick={() => this.handleAnswerNumber(index + 1)} className='answer-list'><span>{alphabet[index]}:</span> {answer.content}</li>
       )
     }
     return answersComponents
@@ -119,7 +120,7 @@ class App extends Component {
             <div>
               {this.state.userName != 'guest' &&
                 <div>
-                  <p id='userName'>{this.state.userName}</p>
+                  <p id='userName' className="text-center">{this.state.userName}のチャレンジ</p>
                   {this.state.isQuestion &&
                     <Question
                       question={this.state.question}
@@ -128,16 +129,29 @@ class App extends Component {
                       answerQuestion={(value) => this.answerQuestion(value)}
                     />
                 }
-                {this.state.isAnswer && <div>次の質問まで少々お待ちください</div>}
+                {this.state.isAnswer &&
+                  <div>
+                    {this.state.questionNumber != 2 &&
+                      <h1 className="text-center">次の質問まで少々お待ちください</h1>
+                    }
+                    {this.state.questionNumber == 2 &&
+                      <div className="text-center">
+                        <h1>お疲れ様です！終了です！</h1>
+                        <p>結果発表までお待ち下さい</p>
+                        <a href='/' className="btn btn-primary">新郎新婦から</a>
+                      </div>
+                    }
+                  </div>
+                }
                 </div>
               }
               {this.state.userName == 'guest' &&
               <div>
-                <p>ようこそ{this.state.userName}様、下の選択肢から自分の名前を選んでください。</p>
-                <div>
-                  <select className='btn btn-primary'
+                <div className="question-content-area">ようこそ{this.state.userName}様、下の選択肢から自分の名前を選んでください。</div>
+                <div className="user-select-area">
+                  <select className='btn'
                           onChange={(e) => this.setStateUser(e.target.value)}>
-                          <option/>
+                          <option value='選択してください' className="default-select">選択してください</option>
                           {userOptions}
                   </select>
                 </div>

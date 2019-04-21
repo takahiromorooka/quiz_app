@@ -94,13 +94,9 @@ hr {
   background-color: #1c1d2f;
 }
 
-.answer-list {
-
-  &:hover{
-    color: red;
-  }
+.text-center {
+  text-align: center;
 }
-
 
 @media screen and (min-width: 961px) {
   main {
