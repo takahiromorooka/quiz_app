@@ -12,8 +12,8 @@ const userOptions = users.map((n) => (
         </option>
     )
   );
-Cookies.remove('user_name');
-Cookies.remove('question_number');
+// Cookies.remove('user_name');
+// Cookies.remove('question_number');
 const user_name = Cookies.get('user_name') ? Cookies.get('user_name') : 'guest';
 const question_number = Cookies.get('question_number') ? Cookies.get('question_number') : 1;
 
