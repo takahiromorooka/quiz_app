@@ -5,13 +5,7 @@ import QuestionApi from "../api/question";
 import Cookies from 'js-cookie';
 
 const socket = socketio.connect('http://localhost:3005')
-const users = JSON.parse(document.getElementById('users').value)
-const userOptions = users.map((n) => (
-        <option key={n.id} value={n.name}>
-            {n.name}
-        </option>
-    )
-  );
+
 // Cookies.remove('user_name');
 // Cookies.remove('question_number');
 const user_name = Cookies.get('user_name') ? Cookies.get('user_name') : 'guest';
@@ -20,19 +14,20 @@ const question_number = Cookies.get('question_number') ? Cookies.get('question_n
 class App extends Component {
   constructor(props) {
     super(props)
-    console.log(user_name)
     this.state = {
       userName: user_name,
       question: {question: ''},
       questionNumber: 1,
       answerNumber: 0,
       isQuestion: true,
-      isAnswer: false
+      isAnswer: false,
+      userOptions: ''
     }
   }
 
   componentDidMount() {
     this.fetchQuestion(question_number)
+    this.fetchUser()
 
     socket.on('nextQuestion', (obj) => {
       //WebSocketサーバーからnextQuestionを受け取った際の処理
@@ -66,7 +61,7 @@ class App extends Component {
   fetchQuestion(questionId) {
     QuestionApi.fetchQuestion(questionId)
       .then((data) => {
-        console.log(data)
+        console.dir(data)
         this.setState({
             question: {question: data}
         })
@@ -74,6 +69,22 @@ class App extends Component {
       .catch((error) => {
         alert('エラーが発生しました。')
         console.log(error)
+    })
+  }
+
+  fetchUser() {
+    QuestionApi.fetchUser()
+    .then((data) => {
+      console.dir(data)
+      const userOptions = data.map((n) => (
+              <option key={n.id} value={n.name}>
+                  {n.name}
+              </option>
+          )
+        );
+      this.setState({
+        userOptions: userOptions
+      })
     })
   }
 
@@ -138,7 +149,6 @@ class App extends Component {
                       <div className="text-center">
                         <h1>お疲れ様です！終了です！</h1>
                         <p>結果発表までお待ち下さい</p>
-                        <a href='/' className="btn btn-primary">新郎新婦から</a>
                       </div>
                     }
                   </div>
@@ -152,7 +162,7 @@ class App extends Component {
                   <select className='btn'
                           onChange={(e) => this.setStateUser(e.target.value)}>
                           <option value='選択してください' className="default-select">選択してください</option>
-                          {userOptions}
+                          {this.state.userOptions}
                   </select>
                 </div>
               </div>

@@ -4,7 +4,6 @@ module Api
 
       def show
         @question = Question.find_by(id: params[:id])
-
         render json: @question
       end
 
@@ -16,6 +15,11 @@ module Api
         else
           json_response(400, '保存に失敗しました。')
         end
+      end
+
+      def entry_user
+        @users = User.all
+        render json: @users
       end
 
       private

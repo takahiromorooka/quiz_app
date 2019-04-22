@@ -12,7 +12,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :questions, only: [:show]
-      put 'questions/:question_id', to: 'questions#answer', as: :question_answer
+      put 'questions/:question_id', to: 'questions#answer',     as: :question_answer
+      get 'questions/users/entry',   to: 'questions#entry_user', as: :entry_user
     end
   end
 end

@@ -13,6 +13,16 @@ class QuestionApi extends ApiBase {
     })
   }
 
+  static fetchUser() {
+    let baseUrl = this.defaultBaseUrl();
+
+    return new Promise(function (resolve, reject) {
+      axios.get(baseUrl + `/questions/users/entry`,)
+        .then(response => resolve(response.data))
+        .catch(error => reject(error.response.data))
+    })
+  }
+
   static fetchAnswer(questionId, answerId, userName) {
     let baseUrl = this.defaultBaseUrl();
 
