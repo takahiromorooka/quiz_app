@@ -8,8 +8,7 @@ module Api
       end
 
       def answer
-        answer = UserQuestion.new(question_id: answer_params[:question_id], answer: answer_params[:answer])
-        answer.user_id = User.find_by!(name: answer_params[:userName]).id
+        answer = UserQuestion.new(answer_params)
         if answer.save!
           render json: answer_params
         else
@@ -25,7 +24,7 @@ module Api
       private
       def answer_params
         params.require(:question).permit(
-          :userName,
+          :user_id,
           :question_id,
           :answer
         )

@@ -9,6 +9,7 @@ const socket = socketio.connect('http://localhost:3005')
 // Cookies.remove('user_name');
 // Cookies.remove('question_number');
 const user_name = Cookies.get('user_name') ? Cookies.get('user_name') : 'guest';
+const user_id = Cookies.get('user_id') ? Cookies.get('user_id') : 0;
 const question_number = Cookies.get('question_number') ? Cookies.get('question_number') : 1;
 
 class App extends Component {
@@ -50,8 +51,9 @@ class App extends Component {
     axios.get(baseUrl + '/questions/1',)
   }
 
-  setStateUser(name) {
-    Cookies.set('user_name', name);
+  setStateUser(user_id) {
+    Cookies.set('user_id', user_id);
+    Cookies.set('user_name', JSON.parse(Cookies.get('user_info'))[parseInt(user_id, 10)-1].name);
     const user_name = Cookies.get('user_name');
     this.setState({
       userName: user_name
@@ -76,8 +78,9 @@ class App extends Component {
     QuestionApi.fetchUser()
     .then((data) => {
       console.dir(data)
+      Cookies.set('user_info', data)
       const userOptions = data.map((n) => (
-              <option key={n.id} value={n.name}>
+              <option key={n.id} value={n.id}>
                   {n.name}
               </option>
           )
@@ -108,7 +111,7 @@ class App extends Component {
   }
 
   answerQuestion(answerNumber) {
-    QuestionApi.fetchAnswer(this.state.questionNumber, answerNumber, this.state.userName)
+    QuestionApi.fetchAnswer(this.state.questionNumber, answerNumber, Cookies.get('user_id'))
       .then((data) => {
         this.setState({
           isAnswer: true,

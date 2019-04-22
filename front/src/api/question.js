@@ -23,7 +23,7 @@ class QuestionApi extends ApiBase {
     })
   }
 
-  static fetchAnswer(questionId, answerId, userName) {
+  static fetchAnswer(questionId, answerId, userId) {
     let baseUrl = this.defaultBaseUrl();
 
     return new Promise(function (resolve, reject) {
@@ -32,9 +32,9 @@ class QuestionApi extends ApiBase {
       axios.put(baseUrl + `/questions` + `/${questionId}`,
           {
             question: {
-              userName: `${userName}`,
-              question_id: `${questionId}`,
-              answer: `${answerId}`
+              user_id: userId,
+              question_id: questionId,
+              answer: answerId
             }
         })
         .then(response => resolve(response.data))
