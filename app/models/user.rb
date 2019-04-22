@@ -13,4 +13,9 @@ class User < ApplicationRecord
   has_many :questions, through: :user_questions
 
   validates :name, presence: true
+
+  def self.get_user_as_json
+    User.all.to_json(only: [:id, :name])
+  end
+
 end

@@ -1,0 +1,115 @@
+body {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  font-weight: 300;
+  font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", "MS Gothic", "ＭＳ ゴシック", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  word-break: break-word;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  background-color: #160552;
+  position: relative;
+  color: #fff;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  line-height: 1.5;
+  letter-spacing: 1.5px;
+  font-weight: 300;
+  margin: 0 0 20px 0;
+}
+
+h1 { font-size: 32px; }
+h2 { font-size: 30px; }
+h3 { font-size: 26px; }
+h4, h5, h6{ font-size: 22px; }
+
+a {
+  color: $fontNavyColor;
+  text-decoration: none;
+  &:hover {
+  }
+}
+
+ul {
+  list-style: none;
+}
+
+p {
+  line-height: 1.9;
+  font-size: 17px;
+}
+
+hr {
+  //margin-bottom: 0;
+  //margin-top: 0;
+  border-color: $borderColor;
+}
+
+.section {
+  margin-bottom: 80px;
+}
+
+.flash-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000000000;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  height: 40px;
+}
+
+.main {
+  padding-top: 80px;
+}
+
+.flash-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100000;
+}
+
+
+.object-fit-contain {
+  display: block;
+  object-fit: contain;
+}
+
+.object-fit-cover {
+  display: block;
+  object-fit: cover;
+}
+
+.navbar{
+  border-bottom: 1px solid $borderColor;
+  background-color: #1c1d2f;
+}
+
+.text-center {
+  text-align: center;
+}
+
+@media screen and (min-width: 961px) {
+  main {
+    width: 1180px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 768px) {
+
+  h1 { font-size: 26px; }
+  h2 { font-size: 24px; }
+  h3 { font-size: 22px; }
+  h4, h5, h6{ font-size: 18px; }
+
+}

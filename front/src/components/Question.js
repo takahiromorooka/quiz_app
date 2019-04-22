@@ -1,46 +1,24 @@
-import React,{Component} from 'react'
+import React, {Component} from 'react'
 import socketio from 'socket.io-client'
-import Form from './Form'
 
 const socket = socketio.connect('http://localhost:3005')
 
-class App  extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            questions: [],
-            answers: []
-        }
-        //このcomponentで扱う配列logsの初期値を設定する
-    }
-    componentDidMount(){
-    }
-
-    render(){
-        const messages = this.state.logs.map(e => (
-            <div key={e.key}>
-                <span>{e.name}</span>
-                <span>: {e.message}</span>
-                <p />
+function Question ({question, answerNumber, showAnswers, answerQuestion}) {
+  return (
+      <div>
+        <div>
+          <div>
+            <div className="question-content-area">{question.question.content}</div>
+            <ol className="answer-ol">
+                {question.question ? showAnswers(question.question.answers) : ''}
+            </ol>
+            <div className="text-center">{answerNumber == 0 ? '' : 'あなたの回答は' + answerNumber + 'でよろしいでしょうか？'}</div>
+            <div className="text-center">
+              <div className='btn btn-primary' onClick={() => answerQuestion(answerNumber)}>final answer？</div>
             </div>
-        ))
-        const comment = this.state.commentLogs.map(e => (
-            <div key={e.key}>
-                <span>{e.comment}</span>
-                <p />
-            </div>
-        ))
-        //ログの設定。今までのname、messageをkeyごとに表示する
-        return(
-            <div>
-                <h1 id='title'>問題</h1>
-                {this.state.questions}
-                {/*<Form />*/}
-                {/*<div id='log'>{messages}</div>*/}
-                {/*<div>{comment}</div>*/}
-            </div>
-        )
-    }
-}
-
-export default App
+          </div>
+        </div>
+      </div>
+    )
+  }
+export default Question
