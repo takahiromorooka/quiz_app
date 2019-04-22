@@ -2,12 +2,13 @@ import React, {Component} from 'react'
 import socketio from 'socket.io-client'
 import Question from './Question'
 import QuestionApi from "../api/question";
+import UserApi from "../api/user";
 import Cookies from 'js-cookie';
 
 const socket = socketio.connect('http://localhost:3005')
 
-// Cookies.remove('user_name');
-// Cookies.remove('question_number');
+Cookies.remove('user_name');
+Cookies.remove('question_number');
 const user_name = Cookies.get('user_name') ? Cookies.get('user_name') : 'guest';
 const user_id = Cookies.get('user_id') ? Cookies.get('user_id') : 0;
 const question_number = Cookies.get('question_number') ? Cookies.get('question_number') : 1;
@@ -75,7 +76,7 @@ class App extends Component {
   }
 
   fetchUser() {
-    QuestionApi.fetchUser()
+    UserApi.fetchUser()
     .then((data) => {
       console.dir(data)
       Cookies.set('user_info', data)
